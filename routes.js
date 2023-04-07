@@ -10,7 +10,7 @@ const Reservation = require("./models/reservation");
 
 const router = new express.Router();
 
-/** Homepage: show list of customers. */
+/** Homepage: show list of customers OR searched customers. */
 
 router.get("/", async function (req, res, next) {
   console.log("req.query",req.query.search);
@@ -26,6 +26,8 @@ router.get("/", async function (req, res, next) {
   }
   return res.render("customer_list.html", { customers });
 });
+
+/** Top Ten: show list of top 10 customers by reservation count. */
 
 router.get("/top-ten/", async function (req, res, next){
   const customers = await Customer.getTopTen();

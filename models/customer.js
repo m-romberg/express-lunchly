@@ -91,13 +91,25 @@ class Customer {
       );
     }
   }
+
   /** Returns string of customer's full name */
 
   getFullName() {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  /** Search for customers */
+  /**
+   * Search for customers by name
+   * Returns array of customer instances
+   *
+   * input: "FirstName LastName"
+   * Returns exact matche(s) by name
+   *
+   * input: "FirstName" OR "LastName"
+   * Returns matches where input matches either name in full name
+   * ex: "Robert" matches "Robert Smith", "Hannah Robert"
+   *
+   */
 
   static async search(query) {
     const queryWords = query.split(" ");
@@ -138,6 +150,11 @@ class Customer {
     return customers.map(customer => new Customer (customer));
   }
 
+  /**
+   * getTopTen
+   * returns an array of customer instances containing top 10 customers
+   * by reservation count
+   */
   static async getTopTen() {
     const results = await db.query(
       `SELECT c.id,

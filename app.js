@@ -27,9 +27,12 @@ app.use(function (req, res, next) {
 /** Error handler: logs stacktrace and returns JSON error message. */
 app.use(function (err, req, res, next) {
   const status = err.status || 500;
-  const message = err.message;
+  // const message = err.message;
   if (process.env.NODE_ENV !== "test") console.error(status, err.stack);
-  return res.status(status).json({ error: { message, status } });
+  return res.status(status).render("error.html", { err });
 });
 
 module.exports = app;
+
+
+// return res.status(status).json({ error: { message, status } });
