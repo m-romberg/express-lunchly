@@ -17,7 +17,7 @@ router.get("/", async function (req, res, next) {
   const name = req.query.search;
 
   let customers;
-  if (name === undefined){
+  if (name === undefined || name.trim().length === 0){
     customers = await Customer.all();
     console.log("customers app.js", customers);
   } else {

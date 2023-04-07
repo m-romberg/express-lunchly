@@ -101,9 +101,12 @@ class Customer {
 
   static async search(query) {
     const queryWords = query.split(" ");
+    const queryWordsCapitalized = queryWords.map(
+      word => word[0].toUpperCase() + word.slice(1).toLowerCase()
+    );
 
     let results;
-    if (queryWords.length === 1) {
+    if (queryWordsCapitalized.length === 1) {
       results = await db.query(
         `SELECT id,
                 first_name AS "firstName",
@@ -112,7 +115,7 @@ class Customer {
                 notes
           FROM customers
           WHERE first_name = $1 OR last_name = $1`,
-        [queryWords[0]]
+        [queryWordsCapitalized[0]]
       );
     } else {
       results = await db.query(
@@ -123,7 +126,7 @@ class Customer {
                 notes
           FROM customers
           WHERE first_name = $1 AND last_name = $2`,
-        [queryWords[0], queryWords[1]]
+        [queryWordsCapitalized[0], queryWordsCapitalized[1]]
       );
     }
 
