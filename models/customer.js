@@ -111,6 +111,7 @@ class Customer {
    *
    */
 
+  //TODO:look for case insensitive like for query
   static async search(query) {
     const queryWords = query.split(" ");
     const queryWordsCapitalized = queryWords.map(
@@ -165,15 +166,14 @@ class Customer {
             FROM customers AS c
               JOIN reservations AS r
                 ON c.id = r.customer_id
-            GROUP BY c.id, r.customer_id
-            ORDER BY COUNT(r.customer_id) DESC
+            GROUP BY c.id
+            ORDER BY COUNT(c.id) DESC
             LIMIT 10`
     );
 
     const customers = results.rows;
-    const customersI = customers.map(customer => new Customer (customer));
-    console.log("customersI", customersI);
-    return customersI;
+
+    return customers.map(customer => new Customer (customer));
   }
 }
 
