@@ -113,35 +113,16 @@ class Customer {
 
   //TODO:look for case insensitive like for query
   static async search(query) {
-    const queryWords = query.split(" ");
-    const queryWordsCapitalized = queryWords.map(
-      word => word[0].toUpperCase() + word.slice(1).toLowerCase()
-    );
-
-    let results;
-    if (queryWordsCapitalized.length === 1) {
-      results = await db.query(
+    const results = await db.query(
         `SELECT id,
                 first_name AS "firstName",
                 last_name  AS "lastName",
                 phone,
                 notes
-          FROM customers
-          WHERE first_name = $1 OR last_name = $1`,
-        [queryWordsCapitalized[0]]
+                FROM customers
+                WHERE (first_name || ' ' || last_name) ILIKE $1`,
+        ['%' + query + '%']
       );
-    } else {
-      results = await db.query(
-        `SELECT id,
-                first_name AS "firstName",
-                last_name  AS "lastName",
-                phone,
-                notes
-          FROM customers
-          WHERE first_name = $1 AND last_name = $2`,
-        [queryWordsCapitalized[0], queryWordsCapitalized[1]]
-      );
-    }
 
     const customers = results.rows;
     console.log(customers);
@@ -178,3 +159,4 @@ class Customer {
 }
 
 module.exports = Customer;
+
