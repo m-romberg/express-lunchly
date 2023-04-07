@@ -137,6 +137,30 @@ class Customer {
     }
     return customers.map(customer => new Customer (customer));
   }
+
+  static async getTopTen() {
+    const results = await db.query(
+      `SELECT c.id, c.first_name, c.last_name, c.phone, c.notes
+              FROM customers AS c
+              JOIN reservations AS r
+                ON c.id = r.customer_id
+              GROUP BY c.id, r.customer_id
+              ORDER BY COUNT(r.customer_id) DESC
+              LIMIT 10`
+    );
+
+    const customers = results.rows;
+    return customers.map(customer => new Customer (customer));
+  }
 }
 
 module.exports = Customer;
+
+
+SELECT customers.id, customers.first_name, customers.last_name, customers.phone, customers.notes
+  FROM customers
+  JOIN reservations
+  ON customers.id = customer_id
+  GROUP BY customers.id, customer_id
+  ORDER BY COUNT(customer_id) DESC
+  LIMIT 10;
