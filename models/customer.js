@@ -140,17 +140,23 @@ class Customer {
 
   static async getTopTen() {
     const results = await db.query(
-      `SELECT c.id, c.first_name, c.last_name, c.phone, c.notes
-              FROM customers AS c
+      `SELECT c.id,
+              c.first_name AS "firstName",
+              c.last_name AS "lastName",
+              c.phone,
+              c.notes
+            FROM customers AS c
               JOIN reservations AS r
                 ON c.id = r.customer_id
-              GROUP BY c.id, r.customer_id
-              ORDER BY COUNT(r.customer_id) DESC
-              LIMIT 10`
+            GROUP BY c.id, r.customer_id
+            ORDER BY COUNT(r.customer_id) DESC
+            LIMIT 10`
     );
 
     const customers = results.rows;
-    return customers.map(customer => new Customer (customer));
+    const customersI = customers.map(customer => new Customer (customer));
+    console.log("customersI", customersI);
+    return customersI;
   }
 }
 
