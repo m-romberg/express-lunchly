@@ -3,6 +3,7 @@
 /** Customer for Lunchly */
 
 const db = require("../db");
+const { NotFoundError } = require("../expressError");
 const Reservation = require("./reservation");
 
 /** Customer of the restaurant. */
@@ -20,7 +21,7 @@ class Customer {
 
   static async all() {
     const results = await db.query(
-          `SELECT id,
+      `SELECT id,
                   first_name AS "firstName",
                   last_name  AS "lastName",
                   phone,
@@ -35,14 +36,14 @@ class Customer {
 
   static async get(id) {
     const results = await db.query(
-          `SELECT id,
+      `SELECT id,
                   first_name AS "firstName",
                   last_name  AS "lastName",
                   phone,
                   notes
            FROM customers
            WHERE id = $1`,
-        [id],
+      [id],
     );
 
     const customer = results.rows[0];
@@ -67,31 +68,71 @@ class Customer {
   async save() {
     if (this.id === undefined) {
       const result = await db.query(
-            `INSERT INTO customers (first_name, last_name, phone, notes)
+        `INSERT INTO customers (first_name, last_name, phone, notes)
              VALUES ($1, $2, $3, $4)
              RETURNING id`,
-          [this.firstName, this.lastName, this.phone, this.notes],
+        [this.firstName, this.lastName, this.phone, this.notes],
       );
       this.id = result.rows[0].id;
     } else {
       await db.query(
-            `UPDATE customers
+        `UPDATE customers
              SET first_name=$1,
                  last_name=$2,
                  phone=$3,
                  notes=$4
              WHERE id = $5`, [
-            this.firstName,
-            this.lastName,
-            this.phone,
-            this.notes,
-            this.id,
-          ],
+        this.firstName,
+        this.lastName,
+        this.phone,
+        this.notes,
+        this.id,
+      ],
       );
     }
   }
-  getFullName(){
+  /** Returns string of customer's full name */
+
+  getFullName() {
     return `${this.firstName} ${this.lastName}`;
+  }
+
+  /** Search for customers */
+
+  static async search(query) {
+    const queryWords = query.split(" ");
+
+    let results;
+    if (queryWords.length === 1) {
+      results = await db.query(
+        `SELECT id,
+                first_name AS "firstName",
+                last_name  AS "lastName",
+                phone,
+                notes
+          FROM customers
+          WHERE first_name = $1 OR last_name = $1`,
+        [queryWords[0]]
+      );
+    } else {
+      results = await db.query(
+        `SELECT id,
+                first_name AS "firstName",
+                last_name  AS "lastName",
+                phone,
+                notes
+          FROM customers
+          WHERE first_name = $1 AND last_name = $2`,
+        [queryWords[0], queryWords[1]]
+      );
+    }
+
+    const customers = results.rows;
+    console.log(customers);
+    if (customers.length < 1) {
+      throw new NotFoundError(`Could not find customer(s) by ${query}`);
+    }
+    return customers.map(customer => new Customer (customer));
   }
 }
 
