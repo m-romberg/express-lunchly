@@ -30,7 +30,7 @@ router.get("/", async function (req, res, next) {
 router.get("/top-ten/", async function (req, res, next){
   const customers = await Customer.getTopTen();
   console.log("customers routes", customers);
-  return res.render("customer_list.html", { customers });
+  return res.render("customer_top_ten_list.html", { customers });
 });
 
 
