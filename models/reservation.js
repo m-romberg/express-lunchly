@@ -59,7 +59,7 @@ class Reservation {
                   start_at=$3
                   notes=$4
               WHERE id=$5`,
-        [this.customerId, this.numGuests, this.startAt, this.notes, this.id]
+        [this.customerId, this.numGuests, this.startAt, this.notes, this.id] //TODO:remove customer ID
       );
     }
   }
