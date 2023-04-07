@@ -155,12 +155,3 @@ class Customer {
 }
 
 module.exports = Customer;
-
-
-SELECT customers.id, customers.first_name, customers.last_name, customers.phone, customers.notes
-  FROM customers
-  JOIN reservations
-  ON customers.id = customer_id
-  GROUP BY customers.id, customer_id
-  ORDER BY COUNT(customer_id) DESC
-  LIMIT 10;
